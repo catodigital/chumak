@@ -101,7 +101,7 @@ queue_ready(#chumak_dealer{state=wait_req, pending_recv={from, PendingRecv}}=Sta
                 gen_server:reply(PendingRecv, {error, queue_empty}),
                 State#chumak_dealer{state=idle, pending_recv=none};
             {error,Info}->
-                error_logger:info_msg("can't get message out in ~p with reason: ~p~n",[chumak_dealer,Info]),
+                logger:warning("cannot process dealer message because: ~p~n",[Info]),
                 State
         end,
     {noreply, FutureState};

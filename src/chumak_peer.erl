@@ -140,10 +140,7 @@ code_change(_OldVsn, State, _Extra) ->
 
 %% @hidden
 handle_call(incoming_queue_out, _From, #state{incoming_queue=nil}=State) ->
-    error_logger:error_report([
-                               incoming_queue_out,
-                               {error, incoming_queue_not_enabled}
-                              ]),
+    logger:error([ incoming_queue_out, {error, incoming_queue_not_enabled} ]),
     {reply, {error, incoming_queue_not_enabled}, State};
 handle_call(incoming_queue_out, _From, #state{incoming_queue=IncomingQueue}=State) ->
     case queue:out(IncomingQueue) of
@@ -227,10 +224,7 @@ handle_info({tcp_closed, _Port}, State) ->
     try_connect(State);
 
 handle_info(InfoMessage, State) ->
-    error_logger:info_report([
-                              unhandled_handle_info,
-                              {msg, InfoMessage}
-                             ]),
+    logger:warning([ unhandled_handle_info, {msg, InfoMessage} ]),
     {noreply, State}.
 
 
@@ -247,10 +241,7 @@ send_data(Data, #state{socket = Socket} = State) ->
         ok ->
             ok;
         {error, Reason}->
-            error_logger:warning_report([
-                                         send_error,
-                                         {error, Reason}
-                                        ])
+            logger:error([ send_error, {error, Reason} ])
     end,
     {noreply, State}.
 
@@ -272,7 +263,7 @@ try_connect(#state{host=Host, port=Port, parent_pid=ParentPid,
             negotiate_greetings(NewState);
 
         {error, Reason} ->
-            logger:error("~p connection failed to ~p:~p because ~p~n", [?MODULE, Host, Port, Reason]),
+            logger:error("connection failed", #{host => Host, port => Port, reason => Reason}),
             timer:sleep(?RECONNECT_TIMEOUT),
             try_connect(State)
     end.
@@ -292,10 +283,7 @@ negotiate_greetings(#state{socket=Socket,
         verify_mechanism(State, NewDecoder)
     catch
         error:{badmatch, Error} ->
-            error_logger:error_report([
-                                       negotiate_greetings_error,
-                                       {error, Error}
-                                      ]),
+            logger:error([ negotiate_greetings_error, {error, Error} ]),
             {stop, Error, State}
     end.
 
@@ -305,10 +293,7 @@ verify_mechanism(#state{mechanism = Mechanism} = State, Decoder) ->
             verify_role(State, Decoder);
         _ ->
             MismatchError = {server_error, "Security mechanism mismatch"},
-            error_logger:error_report([
-                                       negotiate_greetings_error,
-                                       {error, MismatchError}
-                                      ]),
+            logger:error([ negotiate_greetings_error, {error, MismatchError} ]),
             {stop, {shutdown, MismatchError}, State}
     end.
 
@@ -320,7 +305,7 @@ verify_role(#state{mechanism = curve,
         %% %% Each peer must have it's own role
         %% AsServer ->
             %% MismatchError = {server_error, "Role (as-server) mismatch"},
-            %% error_logger:error_report([
+            %% logger:error([
                                        %% negotiate_greetings_error,
                                        %% {error, MismatchError}
                                       %% ]),
@@ -418,7 +403,7 @@ handle_handshake_data(State,
                       {error, {invalid_command_before_ready, _Name}} = Error) ->
     {error, Error, State};
 handle_handshake_data(State, {error, Reason}) ->
-    error_logger:error_report([server_error, {msg, Reason}]),
+    logger:error([server_error, {msg, Reason}]),
     {error, {shutdown, {server_error, Reason}}, State};
 handle_handshake_data(#state{multi_socket_type=true,
                              parent_pid = ResourceRouterPid} = State,
@@ -529,10 +514,7 @@ process_decoder_reply(State, Reply) ->
         {ok, Decoder, Commands} ->
             receive_commands(State, Decoder, Commands);
         {error, Reason} ->
-            error_logger:error_report([
-                                       decode_fail,
-                                       {reason, Reason}
-                                      ]),
+            logger:error([ decode_fail, {reason, Reason} ]),
             {stop, decode_error, State}
     end.
 
@@ -567,10 +549,7 @@ receive_commands(#state{step=ready, parent_pid=ParentPid}=State, NewDecoder, [Co
             receive_commands(State, NewDecoder, Commands);
 
         error ->
-            error_logger:error_report([
-                                       socket_error,
-                                       {reason, chumak_command:error_reason(Command)}
-                                      ]),
+            logger:error([ socket_error, {reason, chumak_command:error_reason(Command)} ]),
             {stop, {shutdown, peer_error}, State};
 
         Name ->
@@ -595,7 +574,7 @@ send_error_to_socket(Socket, ReasonMsg) ->
         ok ->
             ok;
         {error, Reason} ->
-            error_logger:error_msg("Error sending socket error: ~p\n", [Reason])
+            logger:error("Error sending to socket\n", #{reason => Reason})
     end.
 
 send_command_to_socket(Socket, Command) ->
