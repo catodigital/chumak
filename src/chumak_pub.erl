@@ -9,6 +9,7 @@
 
 -module(chumak_pub).
 -behaviour(chumak_pattern).
+-include_lib("kernel/include/logger.hrl").
 
 -export([valid_peer_type/1, init/1, init/2, terminate/2, peer_flags/1, accept_peer/2, peer_ready/3,
          send/3, recv/2,

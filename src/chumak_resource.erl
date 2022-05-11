@@ -7,6 +7,7 @@
 
 -module(chumak_resource).
 -behaviour(gen_server).
+-include_lib("kernel/include/logger.hrl").
 
 %% api behaviour
 -export([start_link/0]).

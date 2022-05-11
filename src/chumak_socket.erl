@@ -7,6 +7,7 @@
 
 -module(chumak_socket).
 -behaviour(gen_server).
+-include_lib("kernel/include/logger.hrl").
 
 -record(state, {socket,
                 socket_state,
