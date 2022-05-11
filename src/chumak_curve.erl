@@ -80,7 +80,7 @@ security_handshake(Socket, Decoder, false, Metadata) ->
         {Decoder5, {ready, MetaData#{security_data => CurveData6}}}
     catch
         error:{badmatch, Error} ->
-            logger:error(#{type => negotiate_greetings_error, error => Error}),
+            logger:error("error in zmq handshake", #{type => negotiate_greetings_error, error => Error}),
             {Decoder, {error, Error}}
     end;
 security_handshake(Socket, Decoder, true, Metadata) ->
@@ -128,7 +128,7 @@ security_handshake(Socket, Decoder, true, Metadata) ->
         {Decoder6, {ready, MetaData#{security_data => CurveData6}}}
     catch
         error:{badmatch, Error} ->
-            ?LOG_ERROR([ negotiate_greetings_error, {error, Error} ]),
+            ?LOG_ERROR("error in zqm handshake", #{type=>negotiate_greetings_error, error=> Error}),
             {Decoder, {error, Error}}
     end.
 

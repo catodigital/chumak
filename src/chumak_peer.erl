@@ -293,7 +293,7 @@ verify_mechanism(#state{mechanism = Mechanism} = State, Decoder) ->
             verify_role(State, Decoder);
         _ ->
             MismatchError = {server_error, "Security mechanism mismatch"},
-            ?LOG_ERROR([ negotiate_greetings_error, {error, MismatchError} ]),
+            ?LOG_ERROR("error in zmq handshake", #{type=> negotiate_greetings_error, error => MismatchError}),
             {stop, {shutdown, MismatchError}, State}
     end.
 
@@ -403,7 +403,7 @@ handle_handshake_data(State,
                       {error, {invalid_command_before_ready, _Name}} = Error) ->
     {error, Error, State};
 handle_handshake_data(State, {error, Reason}) ->
-    ?LOG_ERROR([server_error, {msg, Reason}]),
+    ?LOG_ERROR("error in zmq handshake", #{type=>server_error, error=>{msg, Reason}),
     {error, {shutdown, {server_error, Reason}}, State};
 handle_handshake_data(#state{multi_socket_type=true,
                              parent_pid = ResourceRouterPid} = State,
