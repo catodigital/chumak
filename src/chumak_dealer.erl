@@ -78,7 +78,6 @@ recv_multipart(#chumak_dealer{state=idle, lb=LB}=State, From) ->
     end;
 
 recv_multipart(State, _From) ->
-    io:format("~p~n", [State]),
     {reply, {error, efsm}, State}.
 
 peer_recv_message(State, _Message, _From) ->
@@ -103,7 +102,7 @@ queue_ready(#chumak_dealer{state=wait_req, pending_recv={from, PendingRecv}}=Sta
                 gen_server:reply(PendingRecv, {error, queue_empty}),
                 State#chumak_dealer{state=idle, pending_recv=none};
             {error,Info}->
-                logger:warning("cannot process dealer message because: ~p~n",[Info]),
+                ?LOG_WARNING("cannot process dealer message because: ~p~n",[Info]),
                 State
         end,
     {noreply, FutureState};

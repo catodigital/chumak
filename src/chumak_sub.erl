@@ -128,7 +128,7 @@ queue_ready(State, _Identity, PeerPid) ->
         empty ->
             {noreply,State};
         {error,Info}->
-            logger:warning("cannot process sub message because: ~p~n",[Info]),
+            ?LOG_WARNING("cannot process sub message because: ~p~n",[Info]),
             {noreply,State}
     end.
 

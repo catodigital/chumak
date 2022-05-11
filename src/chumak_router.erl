@@ -106,7 +106,7 @@ queue_ready(State, Identity, PeerPid) ->
         empty ->
             {noreply,State};
         {error,Info}->
-            logger:warning("can't get message out in ~p with reason: ~p~n",[chumak_router,Info]),
+            ?LOG_WARNING("can't get message out in ~p with reason: ~p~n",[chumak_router,Info]),
             {noreply,State}
     end.
 

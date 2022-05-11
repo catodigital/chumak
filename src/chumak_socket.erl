@@ -101,7 +101,7 @@ handle_cast({peer_reconnected, From}, State) ->
     pattern_support(State, peer_reconnected, [From], nowarn);
 
 handle_cast(CastMsg, State) ->
-    logger:warning([
+    ?LOG_WARNING([
                               unhandled_handle_cast,
                               {module, ?MODULE},
                               {msg, CastMsg}
@@ -120,7 +120,7 @@ handle_info({'EXIT', PeerPid, _Other}, State) ->
     exit_peer(PeerPid, State);
 
 handle_info(InfoMsg, State) ->
-    logger:warning([
+    ?LOG_WARNING([
                               unhandled_handle_info,
                               {module, ?MODULE},
                               {msg, InfoMsg}
@@ -215,7 +215,7 @@ pattern_support(#state{socket=S, socket_state=T}=State, Function, Args, Alert) -
             store(apply(S, Function, [T] ++ Args), State); %% call function and store new state
 
         {false, warn} ->
-            logger:warning([
+            ?LOG_WARNING([
                                          pattern_not_supported,
                                          {module, S},
                                          {method, Function},

@@ -139,14 +139,14 @@ recv_from_peer(PeerPid) ->
         empty ->
             empty;
         {error,Info}->
-            logger:warning("can't get message out in ~p with reason: ~p~n",[chumak_rep,Info]),
+            ?LOG_WARNING("can't get message out in ~p with reason: ~p~n",[chumak_rep,Info]),
             empty
     end.
 
 decode_messages([<<>>|Tail])->
     {ok, binary:list_to_bin(Tail)};
 decode_messages([Delimiter|_Tail]) ->
-    logger:warning({
+    ?LOG_WARNING({
                                   invalid_delimiter_frame,
                                   {pattern, rep},
                                   {obtained_frame, Delimiter},
