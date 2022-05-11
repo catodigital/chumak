@@ -76,7 +76,9 @@ recv_multipart(#chumak_dealer{state=idle, lb=LB}=State, From) ->
         {NewLB, PeerPid} ->
             direct_recv_multipart(State#chumak_dealer{lb=NewLB}, PeerPid, PeerPid, From)
     end;
+
 recv_multipart(State, _From) ->
+    io:format("~p~n", [State]),
     {reply, {error, efsm}, State}.
 
 peer_recv_message(State, _Message, _From) ->
