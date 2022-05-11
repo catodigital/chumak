@@ -403,7 +403,7 @@ handle_handshake_data(State,
                       {error, {invalid_command_before_ready, _Name}} = Error) ->
     {error, Error, State};
 handle_handshake_data(State, {error, Reason}) ->
-    ?LOG_ERROR("error in zmq handshake", #{type=>server_error, error=>{msg, Reason}),
+    ?LOG_ERROR("error in zmq handshake", #{type=>server_error, error=>{msg, Reason}}),
     {error, {shutdown, {server_error, Reason}}, State};
 handle_handshake_data(#state{multi_socket_type=true,
                              parent_pid = ResourceRouterPid} = State,
