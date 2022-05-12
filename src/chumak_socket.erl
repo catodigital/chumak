@@ -102,11 +102,7 @@ handle_cast({peer_reconnected, From}, State) ->
     pattern_support(State, peer_reconnected, [From], nowarn);
 
 handle_cast(CastMsg, State) ->
-    ?LOG_WARNING([
-                              unhandled_handle_cast,
-                              {module, ?MODULE},
-                              {msg, CastMsg}
-                             ]),
+    ?LOG_ERROR("zmq system error", #{error => unhandled_handle_cast, args => CastMsg}),
     {noreply, State}.
 
 handle_info({peer_recv_message, Message, From}, State) ->
@@ -121,11 +117,7 @@ handle_info({'EXIT', PeerPid, _Other}, State) ->
     exit_peer(PeerPid, State);
 
 handle_info(InfoMsg, State) ->
-    ?LOG_WARNING([
-                              unhandled_handle_info,
-                              {module, ?MODULE},
-                              {msg, InfoMsg}
-                             ]),
+    ?LOG_ERROR("zmq system error", #{error => unhandled_handle_info, args => InfoMsg}),
     {noreply, State}.
 
 terminate(Reason, #state{socket=Mod, socket_state=S}) ->
@@ -216,12 +208,7 @@ pattern_support(#state{socket=S, socket_state=T}=State, Function, Args, Alert) -
             store(apply(S, Function, [T] ++ Args), State); %% call function and store new state
 
         {false, warn} ->
-            ?LOG_WARNING([
-                                         pattern_not_supported,
-                                         {module, S},
-                                         {method, Function},
-                                         {args, Args}
-                                        ]),
+            ?LOG_ERROR("zmq system error", #{error => pattern_not_supported, socket => S, method => Function, args => Args}),
             {noreply, State};
 
         {false, _} ->

@@ -131,12 +131,7 @@ peer_recv_message(#chumak_req{state=wait_reply, last_peer_sent=From}=State, Mess
         <<>> ->
             {noreply, State#chumak_req{state=wait_more_msg}};
         Frame ->
-            ?LOG_WARNING({
-                                          invalid_delimiter_frame,
-                                          {pattern, req},
-                                          {obtained_frame, Frame},
-                                          {expected_frame, <<>>}
-                                        }),
+            ?LOG_WARNING("zmq recieve error", #{error => invalid_delimiter_frame, pattern => req, obtained_frame => Frame, expected_frame => <<>>}),
             {noreply, State}
     end;
 
@@ -161,13 +156,7 @@ peer_recv_message(#chumak_req{state=wait_more_msg, last_peer_sent=From}=State, M
     end;
 
 peer_recv_message(#chumak_req{last_peer_sent=LastPeer, state=S}=State, Message, From) ->
-    ?LOG_INFO({
-                               discard_message,
-                               {last_peer_sent, LastPeer},
-                               {peer_sent, From},
-                               {state, S},
-                               {message, Message}
-                             }),
+    ?LOG_WARNING("zmq receive error", #{error => discard_message, last_peer_sent => LastPeer, peer_sent => From, state => S, message => Message}),
     {noreply, State}.
 
 queue_ready(State, _Identity, _From) ->

@@ -119,7 +119,7 @@ queue_ready(State, _Identity, PeerPid) ->
         empty ->
             {noreply,State};
         {error,Info}->
-            ?LOG_WARNING("can't get message out in ~p with reason: ~p~n",[chumak_pull,Info]),
+            ?LOG_WARNING("zmq queue error", #{error => send_error, reason => Info}),
             {noreply,State}
     end.
 

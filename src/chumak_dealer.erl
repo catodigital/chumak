@@ -103,7 +103,7 @@ queue_ready(#chumak_dealer{state=wait_req, pending_recv={from, PendingRecv}}=Sta
                 gen_server:reply(PendingRecv, {error, queue_empty}),
                 State#chumak_dealer{state=idle, pending_recv=none};
             {error,Info}->
-                ?LOG_WARNING("cannot process dealer message because: ~p~n",[Info]),
+                ?LOG_WARNING("zmq queue error", #{error => cannot_process, reason => Info}),
                 State
         end,
     {noreply, FutureState};

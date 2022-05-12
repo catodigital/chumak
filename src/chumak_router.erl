@@ -107,7 +107,7 @@ queue_ready(State, Identity, PeerPid) ->
         empty ->
             {noreply,State};
         {error,Info}->
-            ?LOG_WARNING("can't get message out in ~p with reason: ~p~n",[chumak_router,Info]),
+            ?LOG_WARNING("zmq queue error", #{error => send_error, type => router, reason => Info}),
             {noreply,State}
     end.
 
