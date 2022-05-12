@@ -66,7 +66,7 @@ accept_peer(#chumak_pair{pair_pid=nil}=State, PeerPid) ->
     {reply, {ok, PeerPid}, State#chumak_pair{pair_pid=PeerPid}};
 
 accept_peer(State, PeerPid) ->
-    ?LOG_WARNING("zmq connect deny", #{error => already_paired})
+    ?LOG_WARNING("zmq connect deny", #{error => already_paired}),
     chumak_peer:send_error(PeerPid, "This peer is already paired"),
     chumak_peer:close(PeerPid),
     {reply, {error, peer_already_paired}, State}.
