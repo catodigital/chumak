@@ -224,7 +224,7 @@ handle_info({tcp_closed, _Port}, State) ->
     try_connect(State);
 
 handle_info(InfoMessage, State) ->
-    ?LOG_WARNING("zmq system error", #{error => unhandled_handle_info, reason => {msg, InfoMessage} }),
+    ?LOG_WARNING("zmq system error", #{error => unhandled_handle_info, reason => InfoMessage}),
     {noreply, State}.
 
 
@@ -401,7 +401,7 @@ handle_handshake_data(State,
                       {error, {invalid_command_before_ready, _Name}} = Error) ->
     {error, Error, State};
 handle_handshake_data(State, {error, Reason}) ->
-    ?LOG_ERROR("zmq handshake error", #{error => server_error, reason => {msg, Reason}}),
+    ?LOG_ERROR("zmq handshake error", #{error => server_error, reason => Reason}),
     {error, {shutdown, {server_error, Reason}}, State};
 handle_handshake_data(#state{multi_socket_type=true,
                              parent_pid = ResourceRouterPid} = State,
