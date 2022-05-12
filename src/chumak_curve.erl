@@ -129,6 +129,7 @@ security_handshake(Socket, Decoder, true, Metadata) ->
     catch
         error:{badmatch, Error} ->
             ?LOG_ERROR("zmq handshake error", [{error, negotiate_greetings_error}, {reason, Error}]),
+            
             {Decoder, {error, Error}}
     end.
 
