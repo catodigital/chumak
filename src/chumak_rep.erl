@@ -140,7 +140,7 @@ recv_from_peer(PeerPid) ->
         empty ->
             empty;
         {error,Info}->
-            ?LOG_WARNING("zmq send error", #{error => send_error, reason => Info})
+            ?LOG_WARNING("zmq send error", #{error => send_error, reason => Info}),
             empty
     end.
 
