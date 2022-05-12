@@ -19,7 +19,7 @@ start_link(Host, Port) ->
                     Pid = spawn_link(?MODULE, listener, [ListenSocket, ParentPid]),
                     {ok, Pid};
                 {error, Reason} ->
-                    ?LOG_ERROR("zmq listen error", #{error => listen_error, host => Host, addr => Addr, port => Port, reason, Reason}),
+                    ?LOG_ERROR("zmq listen error", #{error => listen_error, host => Host, addr => Addr, port => Port, reason => Reason}),
                     {error, Reason}
             end;
 
@@ -41,7 +41,7 @@ listener(ListenSocket, ParentPid) ->
         error:{badmatch, {error, closed}} ->
             ?LOG_INFO("zmq listener error", #{error => bind_closed});
         error:{badmatch, Error} ->
-            ?LOG_ERROR("zmq listener error", #{error => accept_error, reason, Error }),
+            ?LOG_ERROR("zmq listener error", #{error => accept_error, reason => Error }),
             listener(ListenSocket, ParentPid)
     end.
 
