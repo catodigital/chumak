@@ -24,7 +24,7 @@ start_link(Host, Port) ->
             end;
 
         {error, IpReason} ->
-            ?LOG_ERROR("zmq listen error", #{error => getaddr_error, host => Host, error => IpReason}),
+            ?LOG_ERROR("zmq listen error", #{error => getaddr_error, host => Host, reason => IpReason}),
             {error, IpReason}
     end.
 

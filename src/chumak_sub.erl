@@ -129,7 +129,7 @@ queue_ready(State, _Identity, PeerPid) ->
         empty ->
             {noreply,State};
         {error,Info}->
-            ?LOG_ERROR("zmq queue error", #{error => process, type => sub, reason => Info})
+            ?LOG_ERROR("zmq queue error", #{error => process, type => sub, reason => Info}),
             {noreply,State}
     end.
 
