@@ -282,6 +282,9 @@ negotiate_greetings(#state{socket=Socket,
         {ready, NewDecoder} = chumak_protocol:decode(State#state.decoder, GreetingFrame),
         verify_mechanism(State, NewDecoder)
     catch
+        error:{badmatch, {error, Reason}} ->
+            ?LOG_ERROR("zmq handshake error", #{error => negotiate_error, reason => Reason}),
+            {stop, {error, Reason}, State};
         error:{badmatch, Error} ->
             ?LOG_ERROR("zmq handshake error", #{error => negotiate_error, reason => Error}),
             {stop, Error, State}

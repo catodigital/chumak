@@ -79,6 +79,9 @@ security_handshake(Socket, Decoder, false, Metadata) ->
         CurveData6 = chumak_protocol:decoder_security_data(Decoder5),
         {Decoder5, {ready, MetaData#{security_data => CurveData6}}}
     catch
+        error:{badmatch, {error, Reason}} ->
+            ?LOG_ERROR("zmq handshake error", #{error => negotiate_error, reason => Reason}),
+            {Decoder, {error, Reason}};
         error:{badmatch, Error} ->
             ?LOG_ERROR("zmq handshake error", #{error => negotiate_error, reason => Error}),
             {Decoder, {error, Error}}
@@ -127,9 +130,11 @@ security_handshake(Socket, Decoder, true, Metadata) ->
                                                              CurveData6),
         {Decoder6, {ready, MetaData#{security_data => CurveData6}}}
     catch
+        error:{badmatch, {error, Reason}} ->
+            ?LOG_ERROR("zmq handshake error", #{error => negotiate_error, reason => Reason}),
+            {Decoder, {error, Reason}};
         error:{badmatch, Error} ->
             ?LOG_ERROR("zmq handshake error", #{error => negotiate_error, reason => Error}),
-
             {Decoder, {error, Error}}
     end.
 

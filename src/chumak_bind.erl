@@ -40,6 +40,9 @@ listener(ListenSocket, ParentPid) ->
     catch
         error:{badmatch, {error, closed}} ->
             ?LOG_INFO("zmq listener error", #{error => bind_closed});
+        error:{badmatch, {error, Reason}} ->
+            ?LOG_ERROR("zmq listener error", #{error => accept_error, reason => Reason }),
+            listener(ListenSocket, ParentPid);
         error:{badmatch, Error} ->
             ?LOG_ERROR("zmq listener error", #{error => accept_error, reason => Error }),
             listener(ListenSocket, ParentPid)
