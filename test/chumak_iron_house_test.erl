@@ -80,7 +80,7 @@ negotiate_messages(Values) ->
     invalid_client(Values),
     Message = wait_for_msg(),
     [
-     ?_assertEqual({server_error, {error, closed}}, Message)
+     ?_assertEqual({server_error, closed}, Message)
     ].
 
 wait_for_msg() ->

@@ -77,7 +77,7 @@ wrong_key(_ServerPid) ->
                       Other
               end,
     [
-     ?_assertMatch({server_error, {error, closed}}, Message)
+     ?_assertMatch({server_error, closed}, Message)
     ].
 
 
